@@ -4,7 +4,8 @@
 
 struct node_t{
 
-    int value;
+    int row;
+    int column;
     struct node_t* up;
     struct node_t* down;
     struct node_t* left;
@@ -18,22 +19,29 @@ struct matrix_t{
     int columns;
 };
 
-struct node_t* init_node(int value, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right);
+struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right);
 struct matrix_t* create_matrix(int rows, int columns);
 void print_matrix(struct matrix_t* matrix);
+void free_matrix(struct matrix_t* matrix);
+void validate_matrix(struct matrix_t* matrix);  // will crash on error
 
 int main(){
 
-    struct matrix_t* matrix = create_matrix(4, 3);
+    struct matrix_t* matrix = create_matrix(10, 10);
+    // print_matrix(matrix);
+    // validate_matrix(matrix);
     print_matrix(matrix);
+    free_matrix(matrix);
 
     return 0;
 }
 
-struct node_t* init_node(int value, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right){
+
+struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right){
 
     struct node_t* initNode = (struct node_t*)malloc(sizeof(struct node_t));
-    initNode->value = value;
+    initNode->row = row;
+    initNode->column = column;
     initNode->left = left;
     initNode->right = right;
     initNode->up = up;
@@ -42,8 +50,9 @@ struct node_t* init_node(int value, struct node_t* up, struct node_t* down, stru
     return initNode;
 }
 
+
 struct matrix_t* create_matrix(int rows, int columns){
-    struct node_t* headNode = init_node(0, NULL, NULL, NULL, NULL);
+    struct node_t* headNode = init_node(0, 0, NULL, NULL, NULL, NULL);
     struct node_t* tempNode1 = headNode;
     struct node_t* tempNode2 = headNode;
 
@@ -52,9 +61,9 @@ struct matrix_t* create_matrix(int rows, int columns){
         for(int row = 0; row < rows; row++){
 
             if(column == 0){
-                tempNode1->up = init_node(column*10 + row, NULL, tempNode1, NULL, NULL);
+                tempNode1->up = init_node(row, column, NULL, tempNode1, NULL, NULL);
             }else{
-                tempNode1->up = init_node(column*10 + row, NULL, tempNode1, tempNode1->left->up, NULL);
+                tempNode1->up = init_node(row, column, NULL, tempNode1, tempNode1->left->up, NULL);
                 tempNode1->left->up->right = tempNode1->up;
             }
 
@@ -62,7 +71,7 @@ struct matrix_t* create_matrix(int rows, int columns){
 
         }
 
-        tempNode2->right = init_node(column, NULL, NULL, tempNode2, NULL);
+        tempNode2->right = init_node(0, column, NULL, NULL, tempNode2, NULL);
         tempNode2 = tempNode2->right;
         tempNode1 = tempNode2;
 
@@ -74,6 +83,7 @@ struct matrix_t* create_matrix(int rows, int columns){
     matrix->columns = columns;
     return matrix;
 }
+
 
 void print_matrix(struct matrix_t* matrix){
 
@@ -88,11 +98,58 @@ void print_matrix(struct matrix_t* matrix){
     for(int row = 0; row < matrix->rows; row++){
 
         for(int column = 0; column < matrix->columns; column++){
-            printf("%d ", iterNode2->value);
+            printf("%d %d  ", iterNode2->row, iterNode2->column);
             iterNode2 = iterNode2->right;
         }
         printf("\n");
         iterNode1 = iterNode1->down;
         iterNode2 = iterNode1;
     }
+
+    printf("\n\n");
+}
+
+
+void free_matrix(struct matrix_t* matrix){
+
+    struct node_t* iterNode2 = matrix->headNode;
+    struct node_t* iterNode1 = iterNode2;
+    struct node_t* holdNode;
+
+    for(int row = 0; row <= matrix->rows; row++){
+
+        iterNode1 = iterNode1->up;
+        for(int column = 0; column < matrix->columns; column++){
+            holdNode = iterNode2->right;
+            free(iterNode2);
+            iterNode2 = holdNode;
+        }
+        free(iterNode2);
+        iterNode2 = iterNode1;
+    }
+    free(matrix);
+}
+
+
+void validate_matrix(struct matrix_t* matrix){
+
+    struct node_t* iterNode2 = matrix->headNode;
+    struct node_t* iterNode1 = iterNode2;
+
+    for(int row = 0; row < matrix->rows; row++){
+
+        for(int column = 0; column < matrix->columns; column++){
+
+            iterNode2->up = iterNode2->up;
+            iterNode2->down = iterNode2->down;
+            iterNode2->left = iterNode2->left;
+            iterNode2->right = iterNode2->right;
+
+            iterNode2 = iterNode2->right;
+        }
+        printf("\n");
+        iterNode1 = iterNode1->up;
+        iterNode2 = iterNode1;
+    }
+
 }
