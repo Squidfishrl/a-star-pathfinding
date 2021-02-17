@@ -149,7 +149,12 @@ void free_matrix(struct matrix_t* matrix){
             iterNode2 = holdNode;
         }
         free(iterNode2);
-        iterNode2 = iterNode1;
+        if(iterNode1 == NULL){
+            break;
+        }else{
+            iterNode2 = iterNode1;
+        }
+
     }
     free(matrix);
 }

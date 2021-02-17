@@ -24,6 +24,9 @@ char is_empty_list(struct node_t *arr[], int size);
     A_star_search(matrix);
 
     print_matrix(matrix);
+
+
+    free_matrix(matrix);
     return 0;
 }
 
