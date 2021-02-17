@@ -98,7 +98,8 @@ struct node_t* A_star_search(struct matrix_t* matrix){
 
         for(int i = 0; i<4; i++){
 
-            if(nodeNeighbour[i]->type == 3 || p_exists_in_arr(nodeNeighbour[i], closed, matrixSize) || nodeNeighbour[i] == NULL){
+            if (nodeNeighbour[i] == NULL || nodeNeighbour[i]->type == 3 || p_exists_in_arr(nodeNeighbour[i], closed, matrixSize))
+            {
                 continue;
             }
 

@@ -53,7 +53,11 @@ struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* 
     initNode->right = right;
     initNode->up = up;
     initNode->down = down;
-    initNode->type = 2;
+    if(row == 2 && column!=9){
+        initNode->type = 3;
+    }else{
+        initNode->type = 2;
+    }
     initNode->previous = NULL;
 
     return initNode;
