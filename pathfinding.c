@@ -14,7 +14,7 @@ char is_empty_list(struct node_t *arr[], int size);
 
     struct matrix_t* matrix = create_matrix(10, 10);
     struct node_t *endingNode = matrix->headNode->up;
-    struct node_t* startingNode = matrix->headNode->up->up->right->right->right->up->up->right;
+    struct node_t* startingNode = matrix->headNode->up->up->right->right->right->up->up->right->right->right->right->up->up;
 
     startingNode->type = 1;
     endingNode->type = 0;
@@ -35,6 +35,7 @@ struct node_t* A_star_search(struct matrix_t* matrix){
     struct node_t* startingNode = find_node_by_type(1, matrix);
     struct node_t* destNode = find_node_by_type(0, matrix);
     struct node_t* currentNode;
+
     int tempOpenIndex, closedNodesCount;
     int matrixSize = matrix->columns * matrix->rows;
 
@@ -48,6 +49,9 @@ struct node_t* A_star_search(struct matrix_t* matrix){
     }
 
     open[0] = startingNode;
+    if(open[0] == NULL){
+      printf("why");
+    }
     closedNodesCount = 0;
     do{
 
@@ -72,7 +76,7 @@ struct node_t* A_star_search(struct matrix_t* matrix){
             }
        }
 
- 
+
 
         currentNode = open[tempOpenIndex];
 
@@ -89,7 +93,7 @@ struct node_t* A_star_search(struct matrix_t* matrix){
                 currentNode->type = -1;
                 currentNode = currentNode->previous;
 
-                
+
             }
             return NULL;
         }
@@ -107,7 +111,7 @@ struct node_t* A_star_search(struct matrix_t* matrix){
             }
 
             if (!p_exists_in_arr(nodeNeighbour[i], open, matrixSize) || calc_fCost(nodeNeighbour[i], startingNode, destNode, 0) < nodeNeighbour[i]->fCost){
-                
+
                 nodeNeighbour[i]->previous = currentNode;
                 calc_fCost(nodeNeighbour[i], startingNode, destNode, 1);
 
@@ -132,6 +136,7 @@ struct node_t* A_star_search(struct matrix_t* matrix){
 
 struct node_t* find_node_by_type(int type, struct matrix_t* matrix){
 
+  printf("a");
     struct node_t *iterNode2 = matrix->headNode;
     struct node_t *iterNode1 = iterNode2;
 
@@ -148,7 +153,7 @@ struct node_t* find_node_by_type(int type, struct matrix_t* matrix){
         iterNode1 = iterNode1->up;
         iterNode2 = iterNode1;
     }
-
+      printf("nt found");
     return NULL;
 }
 
@@ -156,7 +161,7 @@ struct node_t* find_node_by_type(int type, struct matrix_t* matrix){
 unsigned int calc_node_distance(struct node_t *nodeA, struct node_t *nodeB){
     int horizontalDistance = nodeA->row - nodeB->row;
     int verticalDistance= nodeA->column - nodeB->column;
-  
+
     if(horizontalDistance < 0){
         horizontalDistance *= -1;
     }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 
 struct node_t{
@@ -11,7 +12,7 @@ struct node_t{
     struct node_t* left;
     struct node_t* right;
 
-    int type;  //-1 = path // 0 = endpoint // 1 = start point //  2 = passable // 3 = not passable 
+    int type;  //-1 = path // 0 = endpoint // 1 = start point //  2 = passable // 3 = not passable
     int fCost;
     int hCost;
     int gCost;
@@ -25,7 +26,7 @@ struct matrix_t{
     int columns;
 };
 
-struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right);
+struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right, int type);
 struct matrix_t* create_matrix(int rows, int columns);
 void print_matrix(struct matrix_t* matrix);
 void free_matrix(struct matrix_t* matrix);
@@ -44,7 +45,7 @@ void validate_matrix(struct matrix_t* matrix);  // will crash on error
 // }
 
 
-struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right){
+struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right, int type){
 
     struct node_t* initNode = (struct node_t*)malloc(sizeof(struct node_t));
     initNode->row = row;
@@ -53,11 +54,8 @@ struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* 
     initNode->right = right;
     initNode->up = up;
     initNode->down = down;
-    if(row == 2 && column!=9){
-        initNode->type = 3;
-    }else{
-        initNode->type = 2;
-    }
+    initNode->type = type;
+
     initNode->previous = NULL;
 
     return initNode;
@@ -65,18 +63,27 @@ struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* 
 
 
 struct matrix_t* create_matrix(int rows, int columns){
-    struct node_t* headNode = init_node(0, 0, NULL, NULL, NULL, NULL);
+    struct node_t* headNode = init_node(0, 0, NULL, NULL, NULL, NULL, 2);
     struct node_t* tempNode1 = headNode;
     struct node_t* tempNode2 = headNode;
+    char nodeType;
+
+    srand(time(NULL));
 
     for(int column = 0; column < columns; column++){
 
         for(int row = 1; row < rows; row++){
-
-            if(column == 0){
-                tempNode1->up = init_node(row, column, NULL, tempNode1, NULL, NULL);
+            nodeType = rand();
+            if(nodeType%3 == 0){
+              nodeType=3;
             }else{
-                tempNode1->up = init_node(row, column, NULL, tempNode1, tempNode1->left->up, NULL);
+              nodeType=2;
+            }
+            printf("%d ", nodeType);
+            if(column == 0){
+                tempNode1->up = init_node(row, column, NULL, tempNode1, NULL, NULL, nodeType);
+            }else{
+                tempNode1->up = init_node(row, column, NULL, tempNode1, tempNode1->left->up, NULL, nodeType);
                 tempNode1->left->up->right = tempNode1->up;
             }
 
@@ -84,7 +91,7 @@ struct matrix_t* create_matrix(int rows, int columns){
 
         }
 
-        tempNode2->right = init_node(0, column+1, NULL, NULL, tempNode2, NULL);
+        tempNode2->right = init_node(0, column+1, NULL, NULL, tempNode2, NULL, nodeType);
         tempNode2 = tempNode2->right;
         tempNode1 = tempNode2;
 
@@ -102,6 +109,7 @@ void print_matrix(struct matrix_t* matrix){
 
     struct node_t* iterNode2 = matrix->headNode;
 
+
     // for(int row = 0; row < matrix->rows; row++){
     //     iterNode2 = iterNode2->up;
     // }
@@ -112,6 +120,7 @@ void print_matrix(struct matrix_t* matrix){
 
         for(int column = 0; column < matrix->columns; column++){
             // printf("%d %d  ", iterNode2->row, iterNode2->column);
+            // randomly generate
             if(iterNode2->type == 2){
                 printf("x");
             }else if(iterNode2->type == 1){
@@ -182,4 +191,3 @@ void validate_matrix(struct matrix_t* matrix){
     }
 
 }
-
