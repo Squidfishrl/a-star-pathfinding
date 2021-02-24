@@ -122,15 +122,15 @@ void print_matrix(struct matrix_t* matrix){
             // printf("%d %d  ", iterNode2->row, iterNode2->column);
             // randomly generate
             if(iterNode2->type == 2){
-                printf("x");
+                printf("x ");
             }else if(iterNode2->type == 1){
-                printf("A");
+                printf("A ");
             }else if(iterNode2->type == 0){
-                printf("B");
+                printf("B ");
             }else if(iterNode2->type == -1){
-                printf("-");
+                printf("- ");
             }else if(iterNode2->type == 3){
-                printf("0");
+                printf("0 ");
             }
             iterNode2 = iterNode2->right;
         }

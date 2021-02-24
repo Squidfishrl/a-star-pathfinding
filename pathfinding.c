@@ -49,15 +49,15 @@ struct node_t* A_star_search(struct matrix_t* matrix){
     }
 
     open[0] = startingNode;
-    if(open[0] == NULL){
-      printf("why");
-    }
     closedNodesCount = 0;
     do{
 
         // find node with lowest f cost
         tempOpenIndex = 0;
-        calc_fCost(open[0], startingNode, destNode, 1);
+        while(open[tempOpenIndex] == NULL){
+            tempOpenIndex++;
+        }
+        calc_fCost(open[tempOpenIndex], startingNode, destNode, 1);
 
         for(int i = 1; i<matrixSize; i++){
             if(open[i] != NULL){
@@ -129,14 +129,13 @@ struct node_t* A_star_search(struct matrix_t* matrix){
         }
 
     }while(!is_empty_list(open, matrixSize));
-    printf("didn't find path");
+    printf("didn't find path \n");
     return NULL;
 }
 
 
 struct node_t* find_node_by_type(int type, struct matrix_t* matrix){
 
-  printf("a");
     struct node_t *iterNode2 = matrix->headNode;
     struct node_t *iterNode1 = iterNode2;
 
@@ -153,7 +152,7 @@ struct node_t* find_node_by_type(int type, struct matrix_t* matrix){
         iterNode1 = iterNode1->up;
         iterNode2 = iterNode1;
     }
-      printf("nt found");
+      printf("not found");
     return NULL;
 }
 
