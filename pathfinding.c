@@ -1,20 +1,24 @@
 #include "matrix.h"
 
-
-struct node_t* find_node_by_type(int type, struct matrix_t *matrix);  // assuming type is unique, else finds first node with type
 unsigned int calc_node_distance(struct node_t* nodeA, struct node_t* nodeB);
 int calc_fCost(struct node_t* targetNode, struct node_t* startNode, struct node_t* destNode, char applyValuesBool);
 struct node_t* A_star_search(struct matrix_t* matrix);
 char p_exists_in_arr(struct node_t* node, struct node_t* nodeArr[], int arrSize);
 char is_empty_list(struct node_t *arr[], int size);
+void rngNodePos(struct matrix_t* matrix, struct node_t** start, struct node_t** end, int rowLen, int columnLen);
 
 
-    int main()
-{
+    int main(){
 
-    struct matrix_t* matrix = create_matrix(10, 10);
-    struct node_t *endingNode = matrix->headNode->up;
-    struct node_t* startingNode = matrix->headNode->up->up->right->right->right->up->up->right->right->right->right->up->up;
+    srand(time(NULL));
+
+    int matrixRows = 30;
+    int matrixColumns = 50;
+
+    struct matrix_t* matrix = create_matrix(matrixRows, matrixColumns);
+    struct node_t *endingNode = NULL;
+    struct node_t *startingNode = NULL;
+    rngNodePos(matrix, &startingNode, &endingNode, matrixRows, matrixColumns);
 
     startingNode->type = 1;
     endingNode->type = 0;
@@ -30,10 +34,26 @@ char is_empty_list(struct node_t *arr[], int size);
     return 0;
 }
 
+void rngNodePos(struct matrix_t* matrix, struct node_t** start, struct node_t** end, int rowLen, int columnLen){
+    int startRow = rand() % (rowLen-1);
+    int startColumn = rand() % (columnLen-1);
+
+    *start = get_node_by_cords(matrix, startRow, startColumn);
+
+
+    int endRow = rand() % (rowLen-1);
+    int endColumn = rand() % (columnLen-1);
+    *end = get_node_by_cords(matrix, endRow, endColumn);
+
+    if(start == end){
+        rngNodePos(matrix, start, end, rowLen, columnLen);
+    }
+}
+
 struct node_t* A_star_search(struct matrix_t* matrix){
 
-    struct node_t* startingNode = find_node_by_type(1, matrix);
-    struct node_t* destNode = find_node_by_type(0, matrix);
+    struct node_t* startingNode = get_node_by_type(1, matrix);
+    struct node_t* destNode = get_node_by_type(0, matrix);
     struct node_t* currentNode;
 
     int tempOpenIndex, closedNodesCount;
@@ -133,28 +153,6 @@ struct node_t* A_star_search(struct matrix_t* matrix){
     return NULL;
 }
 
-
-struct node_t* find_node_by_type(int type, struct matrix_t* matrix){
-
-    struct node_t *iterNode2 = matrix->headNode;
-    struct node_t *iterNode1 = iterNode2;
-
-    for (int row = 0; row < matrix->rows; row++){
-
-        for (int column = 0; column < matrix->columns; column++){
-
-            if (iterNode2->type == type){
-                return iterNode2;
-            }
-
-            iterNode2 = iterNode2->right;
-        }
-        iterNode1 = iterNode1->up;
-        iterNode2 = iterNode1;
-    }
-      printf("not found");
-    return NULL;
-}
 
 
 unsigned int calc_node_distance(struct node_t *nodeA, struct node_t *nodeB){

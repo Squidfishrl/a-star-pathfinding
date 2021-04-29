@@ -31,7 +31,8 @@ struct matrix_t* create_matrix(int rows, int columns);
 void print_matrix(struct matrix_t* matrix);
 void free_matrix(struct matrix_t* matrix);
 void validate_matrix(struct matrix_t* matrix);  // will crash on error
-
+struct node_t* get_node_by_cords(struct matrix_t* matrix, int row, int column);
+struct node_t* get_node_by_type(int type, struct matrix_t* matrix); // assuming type is unique, else finds first node with type
 
 // int main(){
 
@@ -44,6 +45,41 @@ void validate_matrix(struct matrix_t* matrix);  // will crash on error
 //     return 0;
 // }
 
+struct node_t* get_node_by_cords(struct matrix_t* matrix, int row, int column){
+    struct node_t* searchNode = matrix->headNode; // 0 0
+
+    while(searchNode->row != row){
+        searchNode = searchNode->up;
+    }
+
+    while(searchNode->column != column){
+        searchNode = searchNode->right;
+    }
+
+    return searchNode;
+}
+
+struct node_t* get_node_by_type(int type, struct matrix_t* matrix){
+
+    struct node_t *iterNode2 = matrix->headNode;
+    struct node_t *iterNode1 = iterNode2;
+
+    for (int row = 0; row < matrix->rows; row++){
+
+        for (int column = 0; column < matrix->columns; column++){
+
+            if (iterNode2->type == type){
+                return iterNode2;
+            }
+
+            iterNode2 = iterNode2->right;
+        }
+        iterNode1 = iterNode1->up;
+        iterNode2 = iterNode1;
+    }
+      printf("not found");
+    return NULL;
+}
 
 struct node_t* init_node(int row, int column, struct node_t* up, struct node_t* down, struct node_t* left, struct node_t* right, int type){
 
@@ -122,15 +158,15 @@ void print_matrix(struct matrix_t* matrix){
             // printf("%d %d  ", iterNode2->row, iterNode2->column);
             // randomly generate
             if(iterNode2->type == 2){
-                printf("x ");
+                printf("  ");
             }else if(iterNode2->type == 1){
                 printf("A ");
             }else if(iterNode2->type == 0){
                 printf("B ");
             }else if(iterNode2->type == -1){
-                printf("- ");
+                printf("⬛");
             }else if(iterNode2->type == 3){
-                printf("0 ");
+                printf("⬜");
             }
             iterNode2 = iterNode2->right;
         }
